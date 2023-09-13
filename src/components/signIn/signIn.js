@@ -5,7 +5,6 @@ import "./signIn.scss";
 
 import {
    signInWithGooglePopup,
-   createUserDocumentForAuth,
    signInUsingEmailassword,
 } from "../../utils/firebase/firebase";
 
@@ -26,16 +25,13 @@ const SignInComponent = () => {
    };
 
    const logGoogleUser = async () => {
-      const { user } = await signInWithGooglePopup();
-      console.log(user);
-      await createUserDocumentForAuth(user);
+      await signInWithGooglePopup();
    };
 
    const signInSubmitHandler = async (e) => {
       e.preventDefault();
       try {
-         const response = await signInUsingEmailassword(email, password);
-         console.log(response);
+         await signInUsingEmailassword(email, password);
          resetForm();
       } catch (error) {
          switch (error.code) {
@@ -48,10 +44,6 @@ const SignInComponent = () => {
             default:
                console.log(error);
          }
-         if (error.code === "auth/wrong-password") {
-            alert("Incorrect password for email.");
-         }
-         console.log(error);
       }
    };
 
