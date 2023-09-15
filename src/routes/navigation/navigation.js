@@ -15,7 +15,7 @@ import { signOutUser } from "../../utils/firebase/firebase";
 
 const Navigation = () => {
    const { user } = useContext(UserContext);
-   const { cart } = useContext(CartContext);
+   const { displayCart } = useContext(CartContext);
 
    const signOut = async () => {
       await signOutUser();
@@ -42,7 +42,7 @@ const Navigation = () => {
                )}
                <CartIcon />
             </div>
-            {cart.display && <CartDropdown />}
+            {displayCart && <CartDropdown />}
          </div>
          <Outlet />
       </Fragment>
