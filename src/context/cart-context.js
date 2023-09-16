@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 
 const updateItemArray = (cartProducts, product) => {
    let cardProductExists = false;
@@ -21,17 +21,48 @@ export const CartContext = createContext({
    setDisplayCart: () => {},
    cartProducts: [],
    addItemToCart: () => {},
+   removeItemFromCart: () => {},
    productsCount: 0,
+   productTotal: 0,
 });
 
 export const CartContextProvider = ({ children }) => {
    const [displayCart, setDisplayCart] = useState(false);
    const [cartProducts, setCardProducts] = useState([]);
    const [productsCount, setCount] = useState(0);
+   const [productTotal, setTotal] = useState(0);
+
+   useEffect(() => {
+      const cartCount = cartProducts.reduce(
+         (total, product) => (total += product.quantity),
+         0
+      );
+      setCount(cartCount);
+   }, [cartProducts]);
+
+   useEffect(() => {
+      const cartTotal = cartProducts.reduce(
+         (total, product) => total + product.quantity * product.price,
+         0
+      );
+      setTotal(cartTotal);
+   }, [cartProducts]);
 
    const addItemToCart = (product) => {
-      setCount(productsCount + 1);
       setCardProducts(updateItemArray(cartProducts, product));
+   };
+
+   const removeItemFromCart = (product, removeAll) => {
+      if (removeAll || product.quantity === 1) {
+         setCardProducts(cartProducts.filter((item) => item.id !== product.id));
+      } else {
+         setCardProducts(
+            cartProducts.map((item) => {
+               if (item.id === product.id) item.quantity--;
+               return item;
+            })
+         );
+      }
    };
 
    return (
@@ -41,7 +72,9 @@ export const CartContextProvider = ({ children }) => {
             setDisplayCart,
             cartProducts,
             addItemToCart,
+            removeItemFromCart,
             productsCount,
+            productTotal,
          }}
       >
          {children}
